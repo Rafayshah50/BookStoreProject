@@ -1,0 +1,104 @@
+﻿@model ReviewOrderViewModel
+
+@{
+    ViewData["Title"] = "Review Your Order";
+}
+
+<div class="container mt-5">
+    <div class="card-header bg-secondary bg-gradient text-light py-2 mb-2">
+        <h4 class="text-center m-0">Order Details</h4>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-secondary bg-gradient text-white">Your Details</div>
+                <div class="card-body">
+                    <form id="userDetailsForm">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="@Model.UserName">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" class="form-control" id="phone" name="phone" value="@Model.Phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Shipping Address</label>
+                            <textarea class="form-control" id="address" name="address">@Model.Address</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" class="form-control" id="city" name="city" value="@Model.City">
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" class="form-control" id="state" name="state" value="@Model.State">
+                        </div>
+                        <div class="form-group">
+                            <label for="postal">Postal Code</label>
+                            <input type="text" class="form-control" id="postal" name="postal" value="@Model.PostalCode">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@item.Product.ImageURL" alt="@item.Product.Title" class="img-thumbnail" style="width: 100px; height: auto;">
+                            </td>
+                            <td>@item.Product.Title</td>
+                            <td class="price">@($"{(item.Price).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))}")</td>
+                            <td>@item.Quantity</td>
+                            <td class="item-total">@($"{(item.Price * item.Quantity).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))}")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <h4>Total Price: <span id="totalPrice">@($"{(Model.TotalPrice).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))}")</span></h4>
+                <button class="btn btn-primary btn-lg" id="proceedToPayment">Proceed to Payment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#proceedToPayment').on('click', function () {
+                $.post('/Customer/Payment/InitiateStripe', {
+                    userName: $('#name').val(),
+                    phone: $('#phone').val(),
+                    address: $('#address').val(),
+                    city: $('#city').val(),
+                    state: $('#state').val(),
+                    postal: $('#postal').val()
+                }).done(function (response) {
+                    if (response.url) {
+                        window.location = response.url;
+                    } else {
+                        alert('Failed to initiate payment. Please try again.');
+                    }
+                }).fail(function () {
+                    alert('Error occurred while proceeding to payment.');
+                });
+            });
+
+        });
+    </script>
+}

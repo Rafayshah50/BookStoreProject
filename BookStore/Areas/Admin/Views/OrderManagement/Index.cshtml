@@ -1,0 +1,83 @@
+﻿@model IEnumerable<Order>
+
+@{
+    ViewData["Title"] = "Order Management";
+}
+<style>
+    /* Custom styles for DataTable */
+    .dataTables_wrapper .dataTables_filter {
+        float: right;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        float: right;
+    }
+
+    .dataTables_wrapper .dataTables_length {
+        float: left;
+    }
+
+
+    a {
+        text-decoration: none;
+    }
+</style>
+<div class="card-header bg-secondary bg-gradient text-light py-3 mb-1">
+    <h4 class="text-center m-0">Order Managment</h4>
+</div>
+
+<table class="table table-striped" id="ordersTable">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Full Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.FullName</td>
+                <td>@order.PhoneNumber</td>
+                <td>@order.Address, @order.City, @order.State, @order.PostalCode</td>
+                <td>@($"{(order.TotalAmount).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))}")</td>
+                <td>@order.Status</td>
+                <td>
+                    <form asp-action="UpdateStatus" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@order.Id" />
+                        <button class="btn btn-success btn-sm" type="submit" @(order.Status == "Delivered" ? "disabled" : "")>Mark as Delivered</button>
+                    </form>
+                    <form asp-action="Delete" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@order.Id" />
+                        <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        // Initialize DataTable
+        $('#ordersTable').DataTable({
+            "paging": true,       // Enable pagination
+            "searching": true,    // Enable search bar
+            "ordering": true,     // Enable sorting
+            "info": true,         // Show info text
+            "lengthChange": true, // Allow changing the number of entries per page
+            "language": {
+                "paginate": {
+                    "previous": "Prev", // Customize previous button text
+                    "next": "Next"      // Customize next button text
+                }
+            }
+        });
+    });
+</script>

@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Order>
+
+
+<style>
+    /* Custom styles for DataTable */
+    .dataTables_wrapper .dataTables_filter {
+        float: right; 
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        float: right; 
+    }
+
+    .dataTables_wrapper .dataTables_length {
+        float: left; 
+    }
+
+    
+    a {
+        text-decoration: none;
+    }
+</style>
+<div class="card-header bg-secondary bg-gradient text-light py-3 mb-1">
+    <h4 class="text-center m-0">My Orders</h4>
+</div>
+
+<table id="ordersTable" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Name</th>
+            <th>Total</th>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.FullName</td>
+                <td>@($"{(order.TotalAmount).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))}")</td>
+                <td>@order.OrderDate.ToShortDateString()</td>
+                <td>@order.Status</td>
+                <td>
+                    <a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-primary">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<script>
+    $(document).ready(function () {
+        // Initialize DataTable
+        $('#ordersTable').DataTable({
+            "paging": true,       // Enable pagination
+            "searching": true,    // Enable search bar
+            "ordering": true,     // Enable sorting
+            "info": true,         // Show info text
+            "lengthChange": true, // Allow changing the number of entries per page
+            "language": {
+                "paginate": {
+                    "previous": "Prev", // Customize previous button text
+                    "next": "Next"      // Customize next button text
+                }
+            }
+        });
+    });
+</script>

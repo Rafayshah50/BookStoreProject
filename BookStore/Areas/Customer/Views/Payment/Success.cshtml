@@ -1,0 +1,74 @@
+﻿@using System.Globalization
+@model Order
+<style>
+    .success-container {
+        margin-top: 20px;
+        text-align: center;
+        color: #155724;
+    }
+
+    .success-icon {
+        font-size: 80px; 
+        color: #28a745;
+        margin-bottom: 10px; 
+    }
+
+    .order-details {
+        margin-top: 20px;
+    }
+
+    .order-summary {
+        border: 1px solid #ddd; 
+        border-radius: 8px; 
+        padding: 15px; 
+        margin: 20px auto;
+        max-width: 600px;
+        background-color: #fdfdfd; 
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    }
+
+    .btn-success {
+        margin-top: 15px; 
+    }
+</style>
+
+<div class="container success-container">
+    <div class="success-icon">
+        <i class="bi bi-check-circle-fill"></i>
+    </div>
+    <h1 class="display-6 fw-bold">Payment Successful!</h1>
+    <p class="lead mb-4">Thank you for your purchase. Your order has been successfully placed.</p>
+
+    <div class="order-summary">
+        <h3 class="text-center mb-3">Order Details</h3>
+        <table class="table table-striped table-hover">
+            <thead class="table-success">
+                <tr>
+                    <th>Product</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderDetails)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.UnitPrice.ToString("c", new CultureInfo("en-US"))</td>
+                        <td>@item.Quantity</td>
+                        <td>@($"{(item.UnitPrice * item.Quantity).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))}")</td>
+                    </tr>
+                }
+            </tbody>.
+            <tfoot>
+                <tr>
+                    <th colspan="3" class="text-end">Total:</th>
+                    <th>@Model.TotalAmount.ToString("c", new CultureInfo("en-US"))</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <a href="/Customer/Home/Index" class="btn btn-success btn-lg">Back to Store</a>
+</div>
